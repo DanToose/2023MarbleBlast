@@ -32,6 +32,13 @@ public class Player : MonoBehaviour {
 
 	private GameObject gc;
 
+	public bool useSeeThrough;
+	private GameObject objectHit;
+
+	public Material defaultMaterial;
+	public Material hitMaterial;
+	public Material previousMaterial;
+
 	[HideInInspector] public Vector3 ResetPosition;
 	[HideInInspector] public Quaternion ResetRotation; // not actually used yet
 
@@ -111,14 +118,43 @@ public class Player : MonoBehaviour {
 		float l = Vector3.Magnitude (transform.position - CameraRestingPos.transform.position);
 		RaycastHit h;
 		Ray r = new Ray (a, b); 
-		if (Physics.Raycast (r, out h, l))
-			CameraRestingPos.transform.position = h.point;
+		if (!useSeeThrough)
+        {
+			if (Physics.Raycast(r, out h, l))
+				CameraRestingPos.transform.position = h.point;
+			else
+				CameraRestingPos.transform.position = CameraResetPosition.transform.position;
+
+			CameraCollision = Physics.Raycast(r, l);
+
+			MainCam.transform.position = CameraRestingPos.transform.position;
+		}
 		else
-			CameraRestingPos.transform.position = CameraResetPosition.transform.position;
-
-		CameraCollision = Physics.Raycast (r, l);
-
-		MainCam.transform.position = CameraRestingPos.transform.position;
+        {
+			if (Physics.Raycast(r, out h, l))
+			{
+				previousMaterial = defaultMaterial;
+				if (h.transform.gameObject.GetComponent<Renderer>().sharedMaterial != hitMaterial)
+				{
+					defaultMaterial = h.transform.gameObject.GetComponent<Renderer>().material;
+				}
+				if (h.transform.gameObject != objectHit && objectHit != null)
+				{
+					objectHit.transform.gameObject.GetComponent<MeshRenderer>().material = previousMaterial;
+				}
+				objectHit = h.transform.gameObject;
+				objectHit.GetComponent<MeshRenderer>().material = hitMaterial;
+			}
+			else
+			{
+				if (objectHit != null)
+				{
+					objectHit.transform.gameObject.GetComponent<MeshRenderer>().material = defaultMaterial;
+				}
+			}
+			CameraCollision = Physics.Raycast(r, l);
+		}
+		
 	}
 
 	public void ResetPlayer()
