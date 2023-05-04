@@ -86,12 +86,17 @@ public class Player : MonoBehaviour {
 		VerticalComponent = (Input.GetAxis("Vertical"));
 		MovementVector = new Vector3 (HorizontlComponent, 0, VerticalComponent);
 		MovementVector = Quaternion.AngleAxis (OrbitAngle, Vector3.up) * MovementVector;
+		// NEXT LINE IS NEW - BIT JANK
+		// MovementVector = Quaternion.AngleAxis(CamAngle, Vector3.right) * MovementVector;
 		MovementVector.Normalize ();
 
 		rb.AddForce (MovementVector, ForceMode.Impulse);
 		rb.AddForce (MovementVector*TweakValue, ForceMode.VelocityChange);
 
 		OrbitAngle += (Input.GetAxis("Mouse X")*MouseSensitivity);
+
+		// NEXT LINE ALLOWS LOOKING UP AND DOWN, BUT DOES NOT ROTATE CAMERA AROUND PLAYER. ALSO NEEDS CLAMP.
+		// CamAngle -= (Input.GetAxis("Mouse Y") * MouseSensitivity);
 
 		if (Mathf.Abs (Input.GetAxis ("Mouse X")) > 0)
 			CameraCollision = false;
