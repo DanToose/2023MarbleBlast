@@ -19,7 +19,7 @@ public class AudioTrigger : MonoBehaviour
         {
             sourceToPlay = GameObject.Find("SFXSystem").GetComponent<AudioSource>();
         }
-        
+
         if (remoteSFXLocation == null)
         {
             remoteSoundEffect = false;
@@ -43,12 +43,12 @@ public class AudioTrigger : MonoBehaviour
                 PlaySoundClip();
             }
             // If this is a pickup, you'd TOTALLY also do something here that shows the player has picked it up - Maybe flag a boolean in another script, etc
-            
+
             if (destructible)
             {
-                Destroy(gameObject); 
+                Destroy(gameObject);
             }
-                  
+
         }
     }
 
